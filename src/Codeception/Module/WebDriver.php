@@ -1025,7 +1025,7 @@ class WebDriver extends CodeceptionModule implements
             ".//input[./@type = 'submit' or ./@type = 'image' or ./@type = 'button'][contains(./@value, $locator)]",
             ".//input[./@type = 'image'][contains(./@alt, $locator)]",
             ".//button[contains(normalize-space(string(.)), $locator)]",
-            ".//input[./@type = 'submit' or ./@type = 'image' or ./@type = 'button'][./@name = $locator]",
+            ".//input[./@type = 'submit' or ./@type = 'image' or ./@type = 'button'][./@name = $locator or ./@title = $locator]",
             ".//button[./@name = $locator or ./@title = $locator]"
         );
 
