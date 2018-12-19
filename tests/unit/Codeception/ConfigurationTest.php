@@ -3,14 +3,15 @@
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-
     public function setUp()
     {
-        $this->config = \Codeception\Configuration::config();
+        \Codeception\Configuration::$lock = false;
+        $this->config = \Codeception\Configuration::config(getcwd() . DIRECTORY_SEPARATOR . 'codeception.yml');
     }
 
     protected function tearDown()
     {
+        \Codeception\Configuration::$lock = true;
         \Codeception\Module\UniversalFramework::$includeInheritedActions = true;
         \Codeception\Module\UniversalFramework::$onlyActions = [];
         \Codeception\Module\UniversalFramework::$excludeActions = [];
@@ -46,12 +47,43 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         $settings = array('modules' => array('enabled' => array('EmulateModuleHelper')));
         $modules = \Codeception\Configuration::modules($settings);
         $this->assertContains('EmulateModuleHelper', $modules);
+    }
+
+    /**
+     * @group core
+     */
+    public function testModulesDisabled()
+    {
         $settings = array('modules' => array(
             'enabled' => array('EmulateModuleHelper'),
             'disabled' => array('EmulateModuleHelper'),
         ));
         $modules = \Codeception\Configuration::modules($settings);
         $this->assertNotContains('EmulateModuleHelper', $modules);
+    }
+
+    /**
+     * @group core
+     */
+    public function testExtensions()
+    {
+        $this->assertFalse(\Codeception\Configuration::isExtensionEnabled('FancyExtension'));
+
+        \Codeception\Configuration::append(array('extensions' => array('enabled' => array('FancyExtension'))));
+
+        $this->assertTrue(\Codeception\Configuration::isExtensionEnabled('FancyExtension'));
+    }
+
+    /**
+     * @group core
+     */
+    public function testExtensionsDisabled()
+    {
+        $this->assertFalse(\Codeception\Configuration::isExtensionEnabled('FancyExtension'));
+
+        \Codeception\Configuration::append(array('extensions' => array('enabled' => array('FancyExtension'), 'disabled' => array('FancyExtension'))));
+
+        $this->assertFalse(\Codeception\Configuration::isExtensionEnabled('FancyExtension'));
     }
 
     /**

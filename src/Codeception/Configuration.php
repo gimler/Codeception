@@ -490,10 +490,24 @@ class Configuration
         );
     }
 
+    /**
+     * checks if extension is enabled
+     *
+     * @param string extension name
+     * @return bool
+     */
     public static function isExtensionEnabled($extensionName)
     {
-        return isset(self::$config['extensions'], self::$config['extensions']['enabled'])
-        && in_array($extensionName, self::$config['extensions']['enabled']);
+        if (!isset(self::$config['extensions'], self::$config['extensions']['enabled'])) {
+            return false;
+        }
+
+        $enabled = in_array($extensionName, self::$config['extensions']['enabled']);
+        if ($enabled && isset(self::$config['extensions']['disabled'])) {
+            return !in_array($extensionName, self::$config['extensions']['disabled']);
+        }
+
+        return $enabled;
     }
 
     /**
